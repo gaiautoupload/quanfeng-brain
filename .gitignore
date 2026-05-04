@@ -1,0 +1,49 @@
+# Auto-generated
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual env
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data & Vector Store (DO NOT commit)
+data/
+vector_store/
+*.db
+*.sqlite
+
+# Secrets
+.env
+.env.*
+
+# Logs
+*.log

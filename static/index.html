@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全鋒智慧大腦</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 1.5em; margin-bottom: 5px; }
+        .header p { font-size: 0.9em; opacity: 0.9; }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message.user { text-align: right; }
+        .message .bubble {
+            display: inline-block;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .message.user .bubble {
+            background: #1a73e8;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .message.bot .bubble {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .message.bot .sources {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+        .message.bot .sources div {
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+        .input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            gap: 10px;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-container input:focus {
+            border-color: #1a73e8;
+        }
+        .input-container button {
+            padding: 12px 24px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .input-container button:hover {
+            background: #0d47a1;
+        }
+        .input-container button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .typing {
+            display: inline-block;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .typing span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite;
+        }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        .welcome {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+        }
+        .welcome h2 { color: #333; margin-bottom: 10px; }
+        .welcome .examples {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .welcome .examples div {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .welcome .examples div:hover {
+            background: #e8f0fe;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧠 全鋒智慧大腦</h1>
+        <p>RAG 智慧問答系統 | 道路救援 & 機場接送知識庫</p>
+    </div>
+    
+    <div class="chat-container" id="chat">
+        <div class="welcome" id="welcome">
+            <h2>歡迎使用全鋒智慧大腦</h2>
+            <p>您可以詢問關於道路救援、機場接送、國泰金控等相關問題</p>
+            <div class="examples">
+                <div onclick="askQuestion('國道第二類特殊作業收費標準是什麼？')">💰 國道第二類特殊作業收費標準是什麼？</div>
+                <div onclick="askQuestion('道路救援的常見問題有哪些？')">🚗 道路救援的常見問題有哪些？</div>
+                <div onclick="askQuestion('機場接送的待時費如何計算？')">✈️ 機場接送的待時費如何計算？</div>
+                <div onclick="askQuestion('國泰金控的大車補貼參數是什麼？')">🏦 國泰金控的大車補貼參數是什麼？</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="input-container">
+        <input type="text" id="queryInput" placeholder="輸入您的問題..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button id="sendBtn" onclick="sendMessage()">發送</button>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8000/query";
+        
+        function addMessage(content, isUser = false, sources = []) {
+            const welcome = document.getElementById('welcome');
+            if (welcome) welcome.style.display = 'none';
+            
+            const chat = document.getElementById('chat');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            let html = `<div class="bubble">${escapeHtml(content)}</div>`;
+            
+            if (sources.length > 0) {
+                html += '<div class="sources"><strong>📚 參考來源：</strong>';
+                sources.forEach(s => {
+                    html += `<div>📄 ${escapeHtml(s.source)} (相似度: ${(s.similarity * 100).toFixed(1)}%)</div>`;
+                });
+                html += '</div>';
+            }
+            
+            msgDiv.innerHTML = html;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function addTyping() {
+            const chat = document.getElementById('chat');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+            chat.appendChild(typingDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function removeTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('queryInput');
+            const btn = document.getElementById('sendBtn');
+            const query = input.value.trim();
+            
+            if (!query) return;
+            
+            addMessage(query, true);
+            input.value = '';
+            btn.disabled = true;
+            addTyping();
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await response.json();
+                removeTyping();
+                addMessage(data.answer, false, data.sources || []);
+            } catch (error) {
+                removeTyping();
+                addMessage(`⚠️ 連線錯誤: ${error.message}`, false);
+            }
+            
+            btn.disabled = false;
+            input.focus();
+        }
+        
+        function askQuestion(question) {
+            document.getElementById('queryInput').value = question;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>
