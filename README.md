@@ -1,4 +1,4 @@
-# 🤖 智慧課服 (Smart Course Service)
+# 🤖 智慧客服 (Smart Customer Service)
 
 **RAG 智慧問答系統** — 基於道路救援、機場接送知識庫的 AI 問答平台
 
