@@ -1,4 +1,4 @@
-# 🧠 QuanFeng Smart Brain (全鋒智慧大腦)
+# 🤖 智慧課服 (Smart Course Service)
 
 **RAG 智慧問答系統** — 基於道路救援、機場接送知識庫的 AI 問答平台
 
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 將您的 PDF 和 Excel 檔案放入 `data/` 資料夾：
 
 ```
-quanfeng_brain/
+smart-course-service/
 ├── data/
 │   ├── *.pdf          # 知識庫 PDF 文件
 │   └── *.xlsx         # 知識庫 Excel 文件
@@ -135,7 +135,7 @@ Content-Type: application/json
 ## 📁 專案結構
 
 ```
-quanfeng_brain/
+smart-course-service/
 ├── server.py           # FastAPI 伺服器 (主程式)
 ├── ingest.py           # 資料匯入腳本 (PDF/Excel → 向量庫)
 ├── query.py            # 獨立問答腳本 (CLI 模式)
